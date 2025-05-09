@@ -6,6 +6,7 @@
     :root {
         --background: hsl(150 30% 98%)
         --foreground: 150 50% 10%;
+        --title: hsl(146, 36%, 17%);
 
         --card: hsl(150 30% 98%)
         --card-foreground: hsl(150 50% 10%);

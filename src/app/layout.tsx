@@ -4,6 +4,7 @@ import "./globals.css";
 import Sidebar from "@/components/sidebar";
 import Footer from "@/components/footer";
 import { Toaster } from "sonner";
+import { AuthProvider } from "@/components/AuthContext";
 
 const inter = Inter({
     weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -25,11 +26,13 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${inter.className} antialiased`}>
-                <Sidebar />
-                {children}
-                <Toaster richColors />
-                <Footer />
+            <body className={`${inter.className} antialiased`} suppressHydrationWarning>
+                <AuthProvider>
+                    <Sidebar />
+                    {children}
+                    <Toaster richColors />
+                    <Footer />
+                </AuthProvider>
             </body>
         </html>
     );
