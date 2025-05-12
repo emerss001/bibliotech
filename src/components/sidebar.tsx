@@ -11,7 +11,7 @@ const Sidebar = () => {
     const { userEmail, isAuthenticated, authChecked } = useAuth();
 
     return (
-        <header className="flex justify-between mb-3 sticky top-0 z-50 w-full border-b backdrop-blur px-9 py-4">
+        <header className="flex justify-between mb-3 absolute top-0 z-50 w-full border-b backdrop-blur px-9 py-4">
             <Link href="/" className="flex items-center gap-2">
                 <BookOpen size={24} className="text-primary" />
                 <p className="text-xl font-bold">BiblioTech UNIF</p>

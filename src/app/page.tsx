@@ -19,7 +19,7 @@ export default function Home() {
         window.location.href = "/";
     };
     return (
-        <div>
+        <div className="">
             {token ? (
                 <div>
                     <p>Você está autenticado</p>

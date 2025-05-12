@@ -26,12 +26,16 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${inter.className} antialiased`} suppressHydrationWarning>
+            <body className={`${inter.className} antialiased bg-rootbackground`} suppressHydrationWarning>
                 <AuthProvider>
-                    <Sidebar />
-                    {children}
-                    <Toaster richColors />
-                    <Footer />
+                    <div className="min-h-screen flex flex-col">
+                        <div className="flex flex-1">
+                            <Sidebar /> {/* fixo na esquerda */}
+                            <main className="flex-1 pt-20">{children}</main>
+                        </div>
+                        <Toaster richColors />
+                        <Footer /> {/* sempre no final da tela */}
+                    </div>
                 </AuthProvider>
             </body>
         </html>

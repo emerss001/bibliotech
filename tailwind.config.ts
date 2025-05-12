@@ -10,8 +10,10 @@ export default {
     theme: {
         extend: {
             colors: {
+                rootbackground: "var(--root-background)",
                 background: "var(--background)",
                 foreground: "var(--foreground)",
+                star: "var(--star-icon)",
                 title: "var(--title)",
                 card: {
                     DEFAULT: "var(--card))",

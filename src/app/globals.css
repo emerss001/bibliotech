@@ -4,9 +4,11 @@
 
 @layer base {
     :root {
+        --root-background: hsl(160 27 98)
         --background: hsl(150 30% 98%)
         --foreground: 150 50% 10%;
         --title: hsl(146, 36%, 17%);
+        --star-icon: hsl(45 93 47%);
 
         --card: hsl(150 30% 98%)
         --card-foreground: hsl(150 50% 10%);
