@@ -14,6 +14,7 @@ import { ArrowLeft } from "lucide-react";
 const MaterialDetailsPage = () => {
     const { isAuthenticated, logout, authChecked } = useAuth();
     const [material, setMaterial] = useState<MaterialDetailsResponse>();
+    const [loading, setLoading] = useState(true);
 
     const { id } = useParams();
 
@@ -25,16 +26,27 @@ const MaterialDetailsPage = () => {
     }, [authChecked, isAuthenticated, logout]);
 
     useEffect(() => {
+        setLoading(true);
         const materialFetch = async () => {
             try {
                 const materiais = await getMaterialDetails(Number(id));
                 setMaterial(materiais);
             } catch (error) {
                 console.log(error);
+            } finally {
+                setLoading(false);
             }
         };
         materialFetch();
     }, [id]);
+
+    if (loading && !material) {
+        return (
+            <div className="flex flex-col items-center justify-center flex-1 min-h-full py-12">
+                <h1 className="font-semibold text-4xl text-secondary-foreground mb-6">Carregando...</h1>
+            </div>
+        );
+    }
 
     if (!material) {
         return (
