@@ -14,9 +14,11 @@ const MaterialCard = ({ material }: MaterialCardProps) => {
     return (
         <Card className="p-6 space-y-3 w-full full-duplo-card:max-w-80">
             <div className="flex items-center justify-between">
-                <Badge variant="default">{material.formato}</Badge>
-                <Badge variant="outline" className="text-card">
-                    {material.area}
+                <Badge variant="default" className="max-w-[45%]">
+                    <p className="truncate">{material.formato}</p>
+                </Badge>
+                <Badge variant="outline" className="max-w-[45%]">
+                    <p className="truncate">{material.area}</p>
                 </Badge>
             </div>
             <div className="space-y-2">
@@ -29,7 +31,7 @@ const MaterialCard = ({ material }: MaterialCardProps) => {
                 <p className="font-normal text-sm text-muted-foreground">Nível: {material.nivel}</p>
 
                 <p className="font-normal text-sm text-muted-foreground">Enviado por: {material.cadastrado_por}</p>
-                <p className="font-normal text-sm text-secondary-foreground line-clamp-2">{material.descricao}</p>
+                <p className="font-normal text-sm text-secondary-foreground     ">{material.descricao}</p>
             </div>
             <Link href={`material/${material.id}`}>
                 <Button className="w-full mt-6">

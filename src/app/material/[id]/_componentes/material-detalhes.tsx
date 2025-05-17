@@ -7,6 +7,7 @@ import getAvaliacoes, { AvaliacaoResponse } from "@/http/get-avaliacoes";
 import { MaterialDetailsResponse } from "@/http/get-material-details";
 import { CalendarIcon, CheckIcon, DownloadIcon, FileTextIcon, Star, StarIcon, UserIcon, XIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 interface MaterialDetalhesProps {
@@ -46,13 +47,13 @@ const MaterialDetalhes = ({ material }: MaterialDetalhesProps) => {
     };
 
     return (
-        <div className="container py-8">
+        <div className="container self-start py-8">
             <div className="bg-white rounded-lg border border-border overflow-hidden">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-0">
                     {/* Coluna da Esquerda - Imagem */}
                     <div className="p-6 border-r border-border flex flex-col space-y-4">
                         <div className="flex ite justify-between">
-                            <Badge>{material.formato}</Badge>
+                            <Badge>{material.formato.name}</Badge>
                             <Badge variant="outline">{material.tipo}</Badge>
                         </div>
 
@@ -83,10 +84,15 @@ const MaterialDetalhes = ({ material }: MaterialDetalhesProps) => {
                         </div>
                         <Button className="w-full mt-6">
                             {material.tipo === "Digital" ? (
-                                <>
+                                <Link
+                                    href={material.url || ""}
+                                    className="flex items-center gap-2"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
                                     <DownloadIcon />
                                     Fazer download
-                                </>
+                                </Link>
                             ) : (
                                 <>
                                     <CalendarIcon />
@@ -126,7 +132,7 @@ const MaterialDetalhes = ({ material }: MaterialDetalhesProps) => {
                                 <div className="flex items-center gap-2">
                                     <FileTextIcon size={16} className="text-primary" />
                                     <p className="text-secondary-foreground text-sm">
-                                        Adicionado em: {material.dataCadastro}
+                                        {/* Adicionado em: {material.dataCadastro.nome} */}
                                     </p>
                                 </div>
                             </div>

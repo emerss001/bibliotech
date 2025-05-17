@@ -18,7 +18,7 @@ export interface FiltroProps {
     area?: number[];
 }
 
-function buildQueryParams(filtro: FiltroProps, limiteInferior: number, limiteSuperior: number): string {
+function buildQueryParams(filtro: FiltroProps): string {
     const params = new URLSearchParams();
 
     // Filtros múltiplos: adiciona cada valor com o mesmo nome
@@ -27,20 +27,16 @@ function buildQueryParams(filtro: FiltroProps, limiteInferior: number, limiteSup
     filtro.formato?.forEach((f) => params.append("formato", f.toString()));
     filtro.area?.forEach((a) => params.append("area", a.toString()));
 
-    // Paginação
-    params.append("limiteInferior", limiteInferior.toString());
-    params.append("limiteSuperior", limiteSuperior.toString());
-
     return params.toString();
 }
 
-export default async function getMateriais(filtro: FiltroProps, limiteInferior: number): Promise<MaterialResponse[]> {
+export default async function getMateriais(filtro: FiltroProps): Promise<MaterialResponse[]> {
     const token = localStorage.getItem("token");
     if (!token) {
         throw new Error("Token não encontrado. Faça login novamente.");
     }
 
-    const queryParams = buildQueryParams(filtro, limiteInferior, limiteInferior + 10);
+    const queryParams = buildQueryParams(filtro);
 
     try {
         const response = await fetch(`${urlBase}/protegida/materials?${queryParams}`, {

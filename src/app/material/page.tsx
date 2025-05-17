@@ -17,18 +17,19 @@ const MaterialPage = () => {
     const [materiais, setMateriais] = useState<MaterialResponse[]>([]);
     const [formato, setFormato] = useState<FiltroResponse[]>([]);
     const [areaConhecimento, setAreaConhecimento] = useState<FiltroResponse[]>([]);
-    console.log(isAuthenticated);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (authChecked && !isAuthenticated) {
-            toast.error("Sessão expirada. Faça login novamente.", { duration: 3000 });
-            logout();
+        if (!authChecked) return; // Espera a verificação inicial
+        if (!isAuthenticated) {
+            toast.error("Sessão expirada...");
+            setTimeout(() => logout(), 1000); // Delay para evitar conflitos
         }
-    }, [authChecked, isAuthenticated, logout]);
+    }, [authChecked, isAuthenticated]);
 
     const getMateriaisFiltrados = async (filtros: FiltroProps) => {
         try {
-            const materiaisFiltrados = await getMateriais(filtros, 0);
+            const materiaisFiltrados = await getMateriais(filtros);
             setMateriais(materiaisFiltrados);
         } catch (error) {
             console.error("Erro ao buscar materiais filtrados:", error);
@@ -36,17 +37,23 @@ const MaterialPage = () => {
     };
 
     useEffect(() => {
-        const fetchFiltros = async () => {
+        const fetchData = async () => {
             try {
-                const { formato, areaConhecimento } = await getFiltros();
+                const [{ formato, areaConhecimento }, materiais] = await Promise.all([
+                    getFiltros(),
+                    getMateriais({} as FiltroProps),
+                ]);
                 setFormato(formato);
                 setAreaConhecimento(areaConhecimento);
+                setMateriais(materiais);
             } catch (error) {
-                console.error("Erro ao buscar filtros:", error);
+                console.log(error);
+                toast.error("Falha ao carregar dados");
+            } finally {
+                setLoading(false);
             }
         };
-
-        Promise.all([fetchFiltros(), getMateriaisFiltrados({} as FiltroProps)]);
+        fetchData();
     }, []);
 
     return (
@@ -86,10 +93,12 @@ const MaterialPage = () => {
                         areaConhecimento={areaConhecimento}
                     />
                 </div>
-                <div className="flex gap-4 w-full flex-wrap full-duplo-card:justify-center">
-                    {materiais.map((material) => (
-                        <MaterialCard key={material.id} material={material} />
-                    ))}
+                <div className="flex gap-4 w-full flex-wrap full-duplo-card:items-center full-duplo-card:justify-center">
+                    {loading ? (
+                        <p>Carregando</p>
+                    ) : (
+                        materiais.map((material) => <MaterialCard key={material.id} material={material} />)
+                    )}
                 </div>
             </div>
         </div>

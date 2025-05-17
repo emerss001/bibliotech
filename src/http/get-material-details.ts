@@ -7,13 +7,19 @@ export interface MaterialDetailsResponse {
     tipo: "Fisico" | "Digital";
     autor: string;
     titulo: string;
-    formato: string;
-    area: string;
+    formato: {
+        name: string;
+    };
+    area: {
+        name: string;
+    };
     nivel: "Básico" | "Intermediário" | "Avançado";
     nota: number;
     quantidadeAvaliacoes: number;
     descricao: string;
-    dataCadastro: string;
+    cadastradoPor: {
+        nome: string;
+    };
 }
 
 export default async function getMaterialDetails(id: number): Promise<MaterialDetailsResponse> {
