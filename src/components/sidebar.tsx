@@ -19,9 +19,15 @@ const Sidebar = () => {
 
             {/* Menu visível apenas em telas maiores (sm+) */}
             <div className="hidden sm:flex items-center gap-4">
-                <Button variant="ghost">Acervo</Button>
-                <Button variant="ghost">Contribuir</Button>
-                <Button variant="ghost">Empréstimos</Button>
+                <Link href="/material">
+                    <Button variant="ghost">Acervo</Button>
+                </Link>
+                <Link href="contribuir">
+                    <Button variant="ghost">Contribuir</Button>
+                </Link>
+                <Link href="/emprestimos">
+                    <Button variant="ghost">Empréstimos</Button>
+                </Link>
                 {authChecked && isAuthenticated && userEmail && (
                     <Avatar>
                         <AvatarFallback>{userEmail.charAt(0).toUpperCase()}</AvatarFallback>

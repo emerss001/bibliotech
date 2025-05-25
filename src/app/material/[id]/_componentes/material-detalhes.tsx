@@ -5,10 +5,11 @@ import { Textarea } from "@/components/ui/textarea";
 import criarAvaliacao from "@/http/criar-avaliacao";
 import getAvaliacoes, { AvaliacaoResponse } from "@/http/get-avaliacoes";
 import { MaterialDetailsResponse } from "@/http/get-material-details";
-import { CalendarIcon, CheckIcon, DownloadIcon, FileTextIcon, Star, StarIcon, UserIcon, XIcon } from "lucide-react";
+import { CheckIcon, DownloadIcon, FileTextIcon, Star, StarIcon, UserIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import SolicitarEmprestimoButton from "./solicitar-emprestimo-button";
 
 interface MaterialDetalhesProps {
     material: MaterialDetailsResponse;
@@ -18,6 +19,10 @@ const MaterialDetalhes = ({ material }: MaterialDetalhesProps) => {
     const [rating, setRating] = useState(0);
     const [avaliacoes, setAvaliacoes] = useState<AvaliacaoResponse[]>([]);
     const [comentario, setComentario] = useState("");
+    const toekn = localStorage.getItem("token");
+    if (!toekn) {
+        throw new Error("Token não encontrado. Faça login novamente.");
+    }
 
     const handleRating = (value: number) => {
         setRating(value);
@@ -82,24 +87,23 @@ const MaterialDetalhes = ({ material }: MaterialDetalhesProps) => {
                             </p>
                             <span className="text-sm text-primary ml-1">({material.quantidadeAvaliacoes})</span>
                         </div>
-                        <Button className="w-full mt-6">
-                            {material.tipo === "Digital" ? (
-                                <Link
-                                    href={material.url || ""}
-                                    className="flex items-center gap-2"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    <DownloadIcon />
-                                    Fazer download
-                                </Link>
-                            ) : (
-                                <>
-                                    <CalendarIcon />
-                                    Solicitar empréstimo
-                                </>
-                            )}
-                        </Button>
+                        {material.tipo === "Digital" ? (
+                            <Link
+                                href={material.url || ""}
+                                className="flex items-center gap-2"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <DownloadIcon />
+                                Fazer download
+                            </Link>
+                        ) : (
+                            <SolicitarEmprestimoButton
+                                disponibilidade={material.disponibilidade}
+                                materialId={material.id}
+                                token={toekn}
+                            />
+                        )}
                     </div>
 
                     {/* Coluna Central - Informações e Descrição */}

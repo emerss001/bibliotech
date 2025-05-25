@@ -5,6 +5,7 @@ import Sidebar from "@/components/sidebar";
 import Footer from "@/components/footer";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/components/AuthContext";
+import ReactQueryProvider from "@/util/ReactQueryProvider";
 
 const inter = Inter({
     weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -27,16 +28,18 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`${inter.className} antialiased bg-rootbackground`} suppressHydrationWarning>
-                <AuthProvider>
-                    <div className="min-h-screen flex flex-col">
-                        <div className="flex flex-1">
-                            <Sidebar /> {/* fixo na esquerda */}
-                            <main className="flex-1 pt-20">{children}</main>
+                <ReactQueryProvider>
+                    <AuthProvider>
+                        <div className="min-h-screen flex flex-col">
+                            <div className="flex flex-1">
+                                <Sidebar /> {/* fixo na esquerda */}
+                                <main className="flex-1 pt-20">{children}</main>
+                            </div>
+                            <Toaster richColors />
+                            <Footer /> {/* sempre no final da tela */}
                         </div>
-                        <Toaster richColors />
-                        <Footer /> {/* sempre no final da tela */}
-                    </div>
-                </AuthProvider>
+                    </AuthProvider>
+                </ReactQueryProvider>
             </body>
         </html>
     );

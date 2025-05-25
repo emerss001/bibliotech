@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import urlBase from "./url-base";
 import axios from "axios";
 
@@ -8,10 +9,11 @@ interface CriarMaterialData {
     area: string;
     nivel: string;
     descricao: string;
-    arquivo: File; // O arquivo deve ser do tipo File
+    arquivo?: File; // O arquivo deve ser do tipo File
+    quantidade?: number; // Para materiais físicos
 }
 
-export default async function criarMaterial(
+export async function criarMaterialDigital(
     data: CriarMaterialData,
     onProgress?: (percent: number) => void
 ): Promise<void> {
@@ -40,6 +42,25 @@ export default async function criarMaterial(
                     const percent = Math.round((event.loaded * 100) / event.total);
                     onProgress(percent);
                 }
+            },
+        });
+    } catch (error: any) {
+        console.error(error);
+        throw new Error("Erro ao criar material: " + (error?.message ?? "Erro inesperado."));
+    }
+}
+
+export async function CriarMaterialFisico(data: CriarMaterialData): Promise<void> {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        throw new Error("Token não encontrado. Faça login novamente.");
+    }
+    data.nivel = "BASICO";
+    try {
+        await axios.post(`${urlBase}/protegida/materials/material-fisico`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
             },
         });
     } catch (error: any) {
