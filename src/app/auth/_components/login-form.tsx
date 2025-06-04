@@ -1,14 +1,15 @@
+import { useAuth } from "@/components/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import login from "@/http/login";
+import { login } from "@/http/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { LoaderCircleIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -22,8 +23,9 @@ const formSchema = z.object({
 });
 
 const LoginForm = () => {
+    const { login: loginAuth } = useAuth();
+
     const router = useRouter();
-    const [loading, setLoading] = useState(false);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -33,21 +35,21 @@ const LoginForm = () => {
         },
     });
 
+    const { mutate, isPending } = useMutation({
+        mutationFn: login,
+        onSuccess: (data) => {
+            toast.success("Login realizado com sucesso!", { duration: 5000 });
+            localStorage.setItem("token", data.token!);
+            loginAuth();
+            router.push("/");
+        },
+        onError: (error: Error) => {
+            toast.error(error.message, { duration: 5000 });
+        },
+    });
+
     async function handleSubmit(data: z.infer<typeof formSchema>) {
-        setLoading(true);
-        const result = await login(data);
-
-        if (result.error) {
-            setLoading(false);
-            toast.error("Erro ao fazer login: " + result.error, { duration: 5000 });
-            setLoading(false);
-            return;
-        }
-
-        toast.success("Login realizado com sucesso!", { duration: 5000 });
-        localStorage.setItem("token", result.token!);
-
-        router.push("/");
+        mutate(data);
     }
 
     return (
@@ -165,9 +167,9 @@ const LoginForm = () => {
                 <Button
                     type="submit"
                     className="w-full bg-muted-foreground hover:bg-secondary-foreground"
-                    disabled={loading}
+                    disabled={isPending}
                 >
-                    {loading ? <LoaderCircleIcon className="animate-spin" /> : "Entrar"}
+                    {isPending ? <LoaderCircleIcon className="animate-spin" /> : "Entrar"}
                 </Button>
             </form>
         </Form>

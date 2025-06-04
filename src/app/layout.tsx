@@ -31,10 +31,8 @@ export default function RootLayout({
                 <ReactQueryProvider>
                     <AuthProvider>
                         <div className="min-h-screen flex flex-col">
-                            <div className="flex flex-1">
-                                <Sidebar /> {/* fixo na esquerda */}
-                                <main className="flex-1 pt-20">{children}</main>
-                            </div>
+                            <Sidebar /> {/* fixo na esquerda */}
+                            <main className="flex-1 w-full">{children}</main>
                             <Toaster richColors />
                             <Footer /> {/* sempre no final da tela */}
                         </div>

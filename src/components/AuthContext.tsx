@@ -13,6 +13,7 @@ interface AuthContextType {
     isAuthenticated: boolean;
     userEmail: string | null;
     logout: () => void;
+    login: () => void;
     authChecked: boolean;
 }
 
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthContextType>({
     isAuthenticated: false,
     userEmail: null,
     logout: () => {},
+    login: () => {},
     authChecked: false,
 });
 
@@ -36,7 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         router.push("/auth/login");
     };
 
-    useEffect(() => {
+    const login = () => {
         const token = localStorage.getItem("token");
 
         if (token) {
@@ -54,11 +56,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 logout();
             }
         }
-        setAuthChecked(true); // Agora sabemos que a verificação foi feita
+    };
+
+    useEffect(() => {
+        login(); // Verifica se já há um token válido ao carregar
+        setAuthChecked(true);
     }, []);
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, userEmail, logout, authChecked }}>
+        <AuthContext.Provider value={{ isAuthenticated, userEmail, logout, login, authChecked }}>
             {children}
         </AuthContext.Provider>
     );

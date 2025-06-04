@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -7,13 +9,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { LoaderCircleIcon } from "lucide-react";
 import { z } from "zod";
-import { useEffect, useState } from "react";
-import getNecessidades, { NecessidadeResponse } from "@/http/get-necessidades";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import cadastro from "@/http/cadastro";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { cadastro } from "@/http/auth";
+import { getNecessidades } from "@/http/catalo";
 
 const formSchema = z
     .object({
@@ -30,11 +32,21 @@ const formSchema = z
 
         matricula: z.string().optional(),
         siap: z.string().optional(),
+        codigo: z.string().optional(),
         idNecessidade: z.string().optional(),
     })
     .refine((data) => data.senha === data.senhaConfirmacao, {
         message: "As senhas devem ser iguais",
         path: ["senhaConfirmacao"],
+    })
+    .superRefine((data, ctx) => {
+        if (data.vinculo === "BIBLIOTECARIO" && !data.codigo) {
+            ctx.addIssue({
+                path: ["codigo"],
+                message: "Campo obrigatório para bibliotecários",
+                code: z.ZodIssueCode.custom,
+            });
+        }
     })
     .superRefine((data, ctx) => {
         if (data.vinculo === "ALUNO" && !data.matricula) {
@@ -64,40 +76,41 @@ const formSchema = z
 
 const CadastroForm = () => {
     const router = useRouter();
-    const [necessidade, setNecessidade] = useState<NecessidadeResponse[]>([]);
-    const [loading, setLoading] = useState(false);
+    const { data: necessidades } = useQuery({
+        queryKey: ["necessidade"],
+        queryFn: () => getNecessidades(),
+    });
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             vinculo: "ALUNO",
+            idNecessidade: "",
             nome: "",
             email: "",
             senha: "",
             senhaConfirmacao: "",
             declaracao: false,
+            matricula: "",
+            siap: "",
+            codigo: "",
         },
     });
 
-    useEffect(() => {
-        async function fetchData() {
-            const result = await getNecessidades();
-            setNecessidade(result);
-        }
-
-        fetchData();
-    }, []);
+    const { mutate, isPending } = useMutation({
+        mutationFn: cadastro,
+        onSuccess: (result) => {
+            toast.success(result.mensagem || "Cadastro realizado. Aguarde aprovação!");
+            router.push("/");
+        },
+        onError: (error: Error) => {
+            toast.error(error.message, { duration: 5000 });
+        },
+    });
 
     async function handleSubmit(data: z.infer<typeof formSchema>) {
-        setLoading(true);
-        const result = await cadastro(data);
-
-        if (result.error) {
-            toast.error(result.error);
-            setLoading(false);
-        } else {
-            toast.success(result.mensagem || "Cadastro realizado com sucesso!");
-            router.push("/auth/login");
-        }
+        if (!data.idNecessidade) data.idNecessidade = String(0);
+        mutate(data);
     }
 
     return (
@@ -199,7 +212,22 @@ const CadastroForm = () => {
                     )}
                 />
 
-                {form.watch("vinculo") === "ALUNO" ? (
+                {form.watch("vinculo") === "BIBLIOTECARIO" && (
+                    <FormField
+                        control={form.control}
+                        name="codigo"
+                        render={({ field }) => (
+                            <FormItem>
+                                <Label className="text-secondary-foreground">Código de acesso</Label>
+                                <FormControl>
+                                    <Input placeholder="Ex: 123456" className="border focus:border-ring" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                )}
+                {form.watch("vinculo") === "ALUNO" && (
                     <FormField
                         control={form.control}
                         name="matricula"
@@ -213,7 +241,8 @@ const CadastroForm = () => {
                             </FormItem>
                         )}
                     />
-                ) : (
+                )}
+                {form.watch("vinculo") === "PROFESSOR" && (
                     <FormField
                         control={form.control}
                         name="siap"
@@ -228,7 +257,6 @@ const CadastroForm = () => {
                         )}
                     />
                 )}
-
                 {form.watch("vinculo") === "ALUNO" && (
                     <FormField
                         control={form.control}
@@ -237,12 +265,12 @@ const CadastroForm = () => {
                             <FormItem>
                                 <Label className="text-secondary-foreground">Necessidade específica</Label>
                                 <FormControl>
-                                    <Select {...field} onValueChange={field.onChange} defaultValue={field.value}>
+                                    <Select {...field} onValueChange={field.onChange} value={field.value}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Selecione sua necessidade específica" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {necessidade.map((item) => (
+                                            {necessidades?.map((item) => (
                                                 <SelectItem value={item.id.toString()} key={item.id}>
                                                     {item.nome}
                                                 </SelectItem>
@@ -322,9 +350,9 @@ const CadastroForm = () => {
                 <Button
                     type="submit"
                     className="w-full bg-muted-foreground hover:bg-secondary-foreground"
-                    disabled={loading}
+                    disabled={isPending}
                 >
-                    {loading ? <LoaderCircleIcon className="animate-spin" /> : "Solicitar Cadastro"}
+                    {isPending ? <LoaderCircleIcon className="animate-spin" /> : "Solicitar Cadastro"}
                 </Button>
             </form>
         </Form>

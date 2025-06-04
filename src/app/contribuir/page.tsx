@@ -1,3 +1,5 @@
+"use client";
+
 import TitlePagina from "@/components/title-pagina";
 import MaterialForm from "./_components/material-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

@@ -26,12 +26,12 @@ const Cadastro = () => {
 
                 <CardFooter className="flex flex-col space-y-4">
                     <div className="text-center text-xs text-primary">
-                        Primeiro acesso?{" "}
+                        Já tem uma conta?{" "}
                         <Link
-                            href="#"
+                            href="/auth/login"
                             className="text-xs text-secondary-foreground hover:text-secondary-foreground hover:underline"
                         >
-                            Faça seu cadastro
+                            Faça seu acesso
                         </Link>
                     </div>
                 </CardFooter>

@@ -1,22 +1,24 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import Back from "./_componentes/back";
 import MaterialDetalhes from "./_componentes/material-detalhes";
-import getMaterialDetails, { MaterialDetailsResponse } from "@/http/get-material-details";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAuth } from "@/components/AuthContext";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getMaterialDetails } from "@/http/material";
 
 const MaterialDetailsPage = () => {
-    const { isAuthenticated, logout, authChecked } = useAuth();
-    const [material, setMaterial] = useState<MaterialDetailsResponse>();
-    const [loading, setLoading] = useState(true);
-
     const { id } = useParams();
+    const { data: material, isLoading } = useQuery({
+        queryKey: ["materialDetails", id],
+        queryFn: () => getMaterialDetails(Number(id)),
+    });
+
+    const { isAuthenticated, logout, authChecked } = useAuth();
 
     useEffect(() => {
         if (authChecked && !isAuthenticated) {
@@ -25,22 +27,7 @@ const MaterialDetailsPage = () => {
         }
     }, [authChecked, isAuthenticated, logout]);
 
-    useEffect(() => {
-        setLoading(true);
-        const materialFetch = async () => {
-            try {
-                const materiais = await getMaterialDetails(Number(id));
-                setMaterial(materiais);
-            } catch (error) {
-                console.log(error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        materialFetch();
-    }, [id]);
-
-    if (loading && !material) {
+    if (isLoading && !material) {
         return (
             <div className="flex flex-col items-center justify-center flex-1 min-h-full py-12">
                 <h1 className="font-semibold text-4xl text-secondary-foreground mb-6">Carregando...</h1>
@@ -68,8 +55,6 @@ const MaterialDetailsPage = () => {
 
     return (
         <div className="px-9">
-            <Back />
-
             <div className="">{material && <MaterialDetalhes material={material} />}</div>
         </div>
     );

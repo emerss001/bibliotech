@@ -5,13 +5,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import criarAvaliacao from "@/http/criar-avaliacao";
+import { criarAvaliacao } from "@/http/avaliacao";
 import { AlunoEsmprestimoResponse } from "@/http/emprestimos";
 import { useMutation } from "@tanstack/react-query";
-import { AlertCircle, BookOpen, CheckCircleIcon, Clock, LoaderCircleIcon, Star, XCircle } from "lucide-react";
+import {
+    AlertCircle,
+    BookCheckIcon,
+    BookOpen,
+    BookOpenIcon,
+    CalendarIcon,
+    CheckCircleIcon,
+    Clock,
+    LoaderCircleIcon,
+    Star,
+    XIcon,
+} from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
+import { parse } from "date-fns";
 
 interface EmprestimoCardsProps {
     value: "solicitados" | "aprovados" | "historico";
@@ -21,6 +34,7 @@ interface EmprestimoCardsProps {
 const EmprestimoCards = ({ value, material }: EmprestimoCardsProps) => {
     const [rating, setRating] = useState(0);
     const [comentario, setComentario] = useState("");
+    const [avaliar, setAvaliar] = useState(false);
 
     const { mutateAsync, isPending } = useMutation({
         mutationFn: async (avaliacao: { materialId: number; nota: number; avaliacao: string }) => {
@@ -48,6 +62,7 @@ const EmprestimoCards = ({ value, material }: EmprestimoCardsProps) => {
         } finally {
             setRating(0);
             setComentario("");
+            setAvaliar(false);
         }
     }
 
@@ -70,7 +85,7 @@ const EmprestimoCards = ({ value, material }: EmprestimoCardsProps) => {
                     <div className="flex gap-8 mb-4">
                         <div className="w-1/4 relative">
                             <Image
-                                src="/capa-placeholder.png"
+                                src={material.capa || "/capa-placeholder.png"}
                                 alt="Capa do material"
                                 className="rounded-md object-cover"
                                 fill
@@ -105,19 +120,43 @@ const EmprestimoCards = ({ value, material }: EmprestimoCardsProps) => {
                                         <Clock className="h-4 w-4 mr-2 text-faculdade-500" />
                                         <span>Devolução até: {material.dataDevolucaoPrevista}</span>
                                     </div>
-                                    {material.dataDevolucaoPrevista &&
-                                        (new Date(material.dataDevolucaoPrevista).getTime() - Date.now() <
-                                        3 * 24 * 60 * 60 * 1000 ? (
-                                            <div className="flex items-center text-sm text-muted-foreground">
-                                                <AlertCircle className="h-4 w-4 mr-2 text-yellow-500" />
-                                                <span className="text-yellow-600 font-medium">Vencimento próximo</span>
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center text-sm text-muted-foreground">
-                                                <CheckCircleIcon className="h-4 w-4 mr-2 text-green-500" />
-                                                <span className="text-green-600 font-medium">Dentro do prazo</span>
-                                            </div>
-                                        ))}
+                                    {material?.dataDevolucaoPrevista &&
+                                        (() => {
+                                            const dataPrevista = parse(
+                                                material.dataDevolucaoPrevista,
+                                                "dd/MM/yyyy",
+                                                new Date()
+                                            ).getTime();
+                                            const agora = Date.now();
+                                            const diferenca = dataPrevista - agora;
+
+                                            if (diferenca < 0) {
+                                                return (
+                                                    <div className="flex items-center text-sm text-muted-foreground">
+                                                        <AlertCircle className="h-4 w-4 mr-2 text-red-500" />
+                                                        <span className="text-red-600 font-medium">Atrasado</span>
+                                                    </div>
+                                                );
+                                            } else if (diferenca < 3 * 24 * 60 * 60 * 1000) {
+                                                return (
+                                                    <div className="flex items-center text-sm text-muted-foreground">
+                                                        <AlertCircle className="h-4 w-4 mr-2 text-yellow-500" />
+                                                        <span className="text-yellow-600 font-medium">
+                                                            Vencimento próximo
+                                                        </span>
+                                                    </div>
+                                                );
+                                            } else {
+                                                return (
+                                                    <div className="flex items-center text-sm text-muted-foreground">
+                                                        <CheckCircleIcon className="h-4 w-4 mr-2 text-green-500" />
+                                                        <span className="text-green-600 font-medium">
+                                                            Dentro do prazo
+                                                        </span>
+                                                    </div>
+                                                );
+                                            }
+                                        })()}
                                 </div>
                             )}
                             {material.status === "DEVOLVIDO" && (
@@ -134,63 +173,92 @@ const EmprestimoCards = ({ value, material }: EmprestimoCardsProps) => {
                             )}
 
                             {material.status === "REJEITADO" && (
-                                <div className="space-y-2">
-                                    <div className="flex items-center text-sm text-muted-foreground">
-                                        <AlertCircle className="h-4 w-4 mr-2 text-red-500" />
-                                        <span className="text-red-600 font-medium">Solicitação rejeitada</span>
+                                <>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center text-sm text-muted-foreground">
+                                            <AlertCircle className="h-4 w-4 mr-2 text-red-500" />
+                                            <span className="text-red-600 font-medium">Solicitação rejeitada</span>
+                                        </div>
+                                        <div className="flex text-sm text-muted-foreground">
+                                            <CalendarIcon className="h-4 w-4 mr-2" />
+                                            <span className="font-medium">
+                                                Motivo da rejeição:{" "}
+                                                {material.rejicaoMotivo || "Nenhuma mensagem fornecida pelo avaliador."}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center text-sm text-muted-foreground">
-                                        <AlertCircle className="h-4 w-4 mr-2 text-red-500" />
-                                        <span className="text-red-600 font-medium">
-                                            Rejeitada em: {material.dataDevolucaoReal}
-                                        </span>
-                                    </div>
-                                    <p className="text-sm text-destructive">
-                                        Empréstimo rejeitado por determinados motivos rejeitado por determinados motivos
-                                    </p>
-                                </div>
+                                </>
                             )}
                         </div>
                     </div>
 
-                    <div className="mt-4">
-                        <Button variant="outline" className="w-full text-muted-foreground">
-                            <XCircle className="h-4 w-4 mr-2 text-primary" />
-                            Cancelar Solicitação
-                        </Button>
-                    </div>
                     {material.status === "DEVOLVIDO" && (
-                        <div className="mt-4">
-                            <p className="text-sm font-medium text-faculdade-800 mb-2">Avalie este material:</p>
-                            <div className="flex items-center mb-2">
-                                {[1, 2, 3, 4, 5].map((value) => (
-                                    <button
-                                        key={value}
-                                        onClick={() => handleRating(value)}
-                                        className="focus:outline-none"
-                                    >
-                                        <Star
-                                            className={`h-6 w-6 ${
-                                                value <= rating ? "text-yellow-500 fill-yellow-500" : "text-gray-300"
-                                            } transition-colors duration-200 hover:text-yellow-400`}
-                                        />
-                                    </button>
-                                ))}
+                        <>
+                            <div className="mt-4">
+                                <Button
+                                    variant="outline"
+                                    className="w-full text-primary"
+                                    onClick={() => setAvaliar((prev) => !prev)}
+                                >
+                                    <BookCheckIcon className="h-4 w-4 text-primary" />
+                                    Avaliar
+                                </Button>
                             </div>
-                            <Textarea
-                                className="mb-4 border-primary focus-visible:ring-faculdade-500"
-                                placeholder="Compartilhe sua experiência com este material..."
-                                rows={3}
-                                value={comentario}
-                                onChange={(e) => setComentario(e.target.value)}
-                            />
-                            <Button
-                                className="w-full"
-                                disabled={rating === 0 || isPending}
-                                onClick={() => handleAvaliar(material.material.id)}
-                            >
-                                {isPending ? <LoaderCircleIcon className="animate-spin" /> : "Avaliar"}
+
+                            <div className={`mt-4 transition-all duration-500 ease-in-out ${avaliar ? "" : "hidden"}`}>
+                                <p className="text-sm font-medium text-faculdade-800 mb-2">Avalie este material:</p>
+                                <div className="flex items-center mb-2">
+                                    {[1, 2, 3, 4, 5].map((value) => (
+                                        <button
+                                            key={value}
+                                            onClick={() => handleRating(value)}
+                                            className="focus:outline-none"
+                                        >
+                                            <Star
+                                                className={`h-6 w-6 ${
+                                                    value <= rating
+                                                        ? "text-yellow-500 fill-yellow-500"
+                                                        : "text-gray-300"
+                                                } transition-colors duration-200 hover:text-yellow-400`}
+                                            />
+                                        </button>
+                                    ))}
+                                </div>
+                                <Textarea
+                                    className="mb-4 border-primary focus-visible:ring-faculdade-500"
+                                    placeholder="Compartilhe sua experiência com este material..."
+                                    rows={3}
+                                    value={comentario}
+                                    onChange={(e) => setComentario(e.target.value)}
+                                />
+                                <Button
+                                    className="w-full"
+                                    disabled={rating === 0 || isPending}
+                                    onClick={() => handleAvaliar(material.material.id)}
+                                >
+                                    {isPending ? <LoaderCircleIcon className="animate-spin" /> : "Avaliar"}
+                                </Button>
+                            </div>
+                        </>
+                    )}
+
+                    {material.status === "PENDENTE" && (
+                        <div className="mt-4">
+                            <Button variant="outline" className="w-full text-primary">
+                                <XIcon className="h-4 w-4 text-primary" />
+                                Cancelar
                             </Button>
+                        </div>
+                    )}
+
+                    {material.status === "REJEITADO" && (
+                        <div className="mt-4">
+                            <Link href={`/material/${material.material.id}`}>
+                                <Button variant="outline" className="w-full text-primary">
+                                    <BookOpenIcon className="h-4 w-4 text-primary" />
+                                    Ir para o material
+                                </Button>
+                            </Link>
                         </div>
                     )}
                 </CardContent>

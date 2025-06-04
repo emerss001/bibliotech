@@ -1,28 +1,42 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import criarAvaliacao from "@/http/criar-avaliacao";
-import getAvaliacoes, { AvaliacaoResponse } from "@/http/get-avaliacoes";
-import { MaterialDetailsResponse } from "@/http/get-material-details";
 import { CheckIcon, DownloadIcon, FileTextIcon, Star, StarIcon, UserIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import SolicitarEmprestimoButton from "./solicitar-emprestimo-button";
+import { atualizarUsoMaterial, MaterialDetailsResponse } from "@/http/material";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { criarAvaliacao, getAvaliacoes } from "@/http/avaliacao";
+import { toast } from "sonner";
 
 interface MaterialDetalhesProps {
     material: MaterialDetailsResponse;
 }
 
 const MaterialDetalhes = ({ material }: MaterialDetalhesProps) => {
+    const queryClient = useQueryClient();
+    const { data: avaliacoes, refetch } = useQuery({
+        queryKey: ["avaliacoes", material.id],
+        queryFn: () => getAvaliacoes(material.id),
+    });
+    const { mutate } = useMutation({
+        mutationKey: ["criarAvaliacao"],
+        mutationFn: criarAvaliacao,
+        onSuccess: () => {
+            toast.success("Avaliação enviada com sucesso!");
+            refetch();
+        },
+        onError: (error: Error) => {
+            toast.error(`Erro ao enviar avaliação: ${error.message}`);
+        },
+    });
     const [rating, setRating] = useState(0);
-    const [avaliacoes, setAvaliacoes] = useState<AvaliacaoResponse[]>([]);
     const [comentario, setComentario] = useState("");
-    const toekn = localStorage.getItem("token");
-    if (!toekn) {
-        throw new Error("Token não encontrado. Faça login novamente.");
-    }
 
     const handleRating = (value: number) => {
         setRating(value);
@@ -35,20 +49,10 @@ const MaterialDetalhes = ({ material }: MaterialDetalhesProps) => {
             avaliacao: comentario,
         };
 
-        try {
-            await criarAvaliacao(data);
-            setRating(0);
-            setComentario("");
-        } catch (error) {
-            console.error("Erro ao enviar avaliação:", error);
-        } finally {
-            getAvalaliacoes(materialId);
-        }
-    };
-
-    const getAvalaliacoes = async (idMaterial: number) => {
-        const result = await getAvaliacoes(idMaterial);
-        setAvaliacoes(result);
+        mutate(data);
+        queryClient.resetQueries({ queryKey: ["materialDetails", String(materialId)] });
+        setRating(0);
+        setComentario("");
     };
 
     return (
@@ -63,7 +67,12 @@ const MaterialDetalhes = ({ material }: MaterialDetalhesProps) => {
                         </div>
 
                         <div className="relative aspect-[3/4] w-full mb-4 rounded-md overflow-hidden shadow-sm">
-                            <Image alt="Capa do material" src="/capa-placeholder.png" fill className="object-cover" />
+                            <Image
+                                alt="Capa do material"
+                                src={material.capa || "/capa-placeholder.png"}
+                                fill
+                                className="object-cover"
+                            />
                         </div>
 
                         <h1 className="text-center font-bold text-lg text-title">Avaliação</h1>
@@ -93,15 +102,17 @@ const MaterialDetalhes = ({ material }: MaterialDetalhesProps) => {
                                 className="flex items-center gap-2"
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                onClick={() => atualizarUsoMaterial(material.id)}
                             >
-                                <DownloadIcon />
-                                Fazer download
+                                <Button className="w-full">
+                                    <DownloadIcon />
+                                    Fazer download
+                                </Button>
                             </Link>
                         ) : (
                             <SolicitarEmprestimoButton
                                 disponibilidade={material.disponibilidade}
                                 materialId={material.id}
-                                token={toekn}
                             />
                         )}
                     </div>
@@ -136,7 +147,7 @@ const MaterialDetalhes = ({ material }: MaterialDetalhesProps) => {
                                 <div className="flex items-center gap-2">
                                     <FileTextIcon size={16} className="text-primary" />
                                     <p className="text-secondary-foreground text-sm">
-                                        {/* Adicionado em: {material.dataCadastro.nome} */}
+                                        Adicionado em: {material.adicionado}
                                     </p>
                                 </div>
                             </div>
@@ -151,7 +162,6 @@ const MaterialDetalhes = ({ material }: MaterialDetalhesProps) => {
                                     Descrição
                                 </TabsTrigger>
                                 <TabsTrigger
-                                    onClick={() => getAvalaliacoes(material.id)}
                                     value="avaliacoes"
                                     className="data-[state=active]:bg-primary data-[state=active]:text-white"
                                 >
@@ -171,7 +181,7 @@ const MaterialDetalhes = ({ material }: MaterialDetalhesProps) => {
 
                             <TabsContent value="avaliacoes">
                                 <div className="space-y-4">
-                                    {avaliacoes.map((avaliacao) => (
+                                    {avaliacoes?.map((avaliacao) => (
                                         <div
                                             className="p-4 bg-white rounded-lg border border-primary"
                                             key={avaliacao.id}
@@ -208,8 +218,6 @@ const MaterialDetalhes = ({ material }: MaterialDetalhesProps) => {
                                             </p>
                                         </div>
                                     ))}
-
-                                    <Button className="flex justify-center">Ver Todas as Avaliações</Button>
                                 </div>
                             </TabsContent>
                         </Tabs>

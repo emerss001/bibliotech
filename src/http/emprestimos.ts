@@ -1,10 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 import urlBase from "./url-base";
-
-// interface ErroResponse {
-//     status: number;
-//     error: string;
-// }
 
 interface AlunoEsmprestimoResponse {
     id: number;
@@ -20,9 +16,35 @@ interface AlunoEsmprestimoResponse {
     dataAprovacao?: string;
     dataDevolucaoPrevista?: string;
     dataDevolucaoReal?: string;
-    mensagem: string;
+    rejicaoMotivo: string;
     status: "PENDENTE" | "APROVADO" | "REPROVADO" | "DEVOLVIDO" | "REJEITADO";
+    capa: string;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const criarEmprestimo = async (id: number, mensagem: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        throw new Error("Token não encontrado. Faça login novamente.");
+    }
+
+    try {
+        const response = await axios.post(`${urlBase}/protegida/emprestimos/${id}`, mensagem ? { mensagem } : {}, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        });
+
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            if (error.response) {
+                throw new Error(error.response.data.error || "Erro ao aprovar o empréstimo.");
+            }
+        }
+    }
+};
 
 export const listarEmprestimosAluno = async (): Promise<AlunoEsmprestimoResponse[]> => {
     const token = localStorage.getItem("token");

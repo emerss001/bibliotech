@@ -3,7 +3,6 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen } from "lucide-react";
 import Link from "next/link";
-import { Toaster } from "@/components/ui/sonner";
 import LoginForm from "../_components/login-form";
 
 const Login = () => {
@@ -29,7 +28,7 @@ const Login = () => {
                     <div className="text-center text-xs text-primary">
                         Primeiro acesso?{" "}
                         <Link
-                            href="#"
+                            href="/auth/cadastro"
                             className="text-xs text-secondary-foreground hover:text-secondary-foreground hover:underline"
                         >
                             Faça seu cadastro
@@ -37,7 +36,6 @@ const Login = () => {
                     </div>
                 </CardFooter>
             </Card>
-            <Toaster richColors />
         </div>
     );
 };

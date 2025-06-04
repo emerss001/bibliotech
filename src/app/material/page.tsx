@@ -2,62 +2,45 @@
 
 import TitlePagina from "@/components/title-pagina";
 import Filtros from "./_componentes/filtro";
-import { useEffect, useState } from "react";
-import getFiltros, { FiltroResponse } from "@/http/get-filtros";
+import { useState } from "react";
 import MaterialCard from "./_componentes/material-card";
-import getMateriais, { FiltroProps, MaterialResponse } from "@/http/get-materiais";
-import { useAuth } from "@/components/AuthContext";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { SlidersHorizontalIcon } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import getFiltros from "@/http/catalo";
+import { FiltroProps, getMateriais } from "@/http/material";
 
 const MaterialPage = () => {
-    const { isAuthenticated, logout, authChecked } = useAuth();
-    const [materiais, setMateriais] = useState<MaterialResponse[]>([]);
-    const [formato, setFormato] = useState<FiltroResponse[]>([]);
-    const [areaConhecimento, setAreaConhecimento] = useState<FiltroResponse[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [filtros, setFiltros] = useState<FiltroProps>({} as FiltroProps);
 
-    useEffect(() => {
-        if (!authChecked) return; // Espera a verificação inicial
-        if (!isAuthenticated) {
-            toast.error("Sessão expirada...");
-            setTimeout(() => logout(), 1000); // Delay para evitar conflitos
-        }
-    }, [authChecked, isAuthenticated]);
+    const { data: filtrosData } = useQuery({
+        queryKey: ["filtros"],
+        queryFn: getFiltros,
+    });
+    const {
+        data: materiais,
+        isLoading,
+        refetch,
+    } = useQuery({
+        queryKey: ["materiais", filtros],
+        queryFn: () => getMateriais(filtros),
+        enabled: true,
+    });
 
     const getMateriaisFiltrados = async (filtros: FiltroProps) => {
+        setFiltros(filtros);
         try {
-            const materiaisFiltrados = await getMateriais(filtros);
-            setMateriais(materiaisFiltrados);
+            await refetch();
         } catch (error) {
             console.error("Erro ao buscar materiais filtrados:", error);
+            toast.error("Falha ao buscar materiais filtrados");
         }
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [{ formato, areaConhecimento }, materiais] = await Promise.all([
-                    getFiltros(),
-                    getMateriais({} as FiltroProps),
-                ]);
-                setFormato(formato);
-                setAreaConhecimento(areaConhecimento);
-                setMateriais(materiais);
-            } catch (error) {
-                console.log(error);
-                toast.error("Falha ao carregar dados");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, []);
-
     return (
-        <div className="px-9 mt-8">
+        <div className="px-9 mt-8 mb-8">
             <TitlePagina
                 title="Acervo Digital Acessível"
                 description="Materiais didáticos adaptados para diferentes necessidades"
@@ -78,8 +61,8 @@ const MaterialPage = () => {
                                 <SheetDescription className="flex mt-3 items-center justify-center">
                                     <Filtros
                                         getMateriaisFiltrados={getMateriaisFiltrados}
-                                        formato={formato}
-                                        areaConhecimento={areaConhecimento}
+                                        formato={filtrosData?.formato || []}
+                                        areaConhecimento={filtrosData?.areaConhecimento || []}
                                     />
                                 </SheetDescription>
                             </SheetHeader>
@@ -89,15 +72,15 @@ const MaterialPage = () => {
                 <div className="hidden duplo-card:flex">
                     <Filtros
                         getMateriaisFiltrados={getMateriaisFiltrados}
-                        formato={formato}
-                        areaConhecimento={areaConhecimento}
+                        formato={filtrosData?.formato || []}
+                        areaConhecimento={filtrosData?.areaConhecimento || []}
                     />
                 </div>
                 <div className="flex gap-4 w-full flex-wrap full-duplo-card:items-center full-duplo-card:justify-center">
-                    {loading ? (
+                    {isLoading ? (
                         <p>Carregando</p>
                     ) : (
-                        materiais.map((material) => <MaterialCard key={material.id} material={material} />)
+                        materiais?.map((material) => <MaterialCard key={material.id} material={material} />)
                     )}
                 </div>
             </div>
