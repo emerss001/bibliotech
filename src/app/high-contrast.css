@@ -1,0 +1,19 @@
+/* src/styles/high-contrast.css */
+@tailwind utilities;
+
+.high-contrast {
+    color-scheme: only light;
+}
+
+/* Estilos específicos para elementos interativos */
+.high-contrast a {
+    @apply underline;
+}
+
+.high-contrast button,
+.high-contrast [role="button"],
+.high-contrast input,
+.high-contrast select,
+.high-contrast textarea {
+    @apply hc-border-2;
+}

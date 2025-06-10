@@ -4,13 +4,14 @@
 
 @layer base {
     :root {
-        --root-background: hsl(160 27 98)
-        --background: hsl(150 30% 98%)
-        --foreground: 150 50% 10%;
+        --root-background: hsl(160 27% 98%);
+        --background: hsl(150 30% 98%);
+        --foreground: hsl(150 50% 10%);
         --title: hsl(146, 36%, 17%);
-        --star-icon: hsl(45 93 47%);
+        --star-icon: hsl(45 93% 47%);
+        --write: #ffffff;
 
-        --card: hsl(150 30% 98%)
+        --card: hsl(150 30% 98%);
         --card-foreground: hsl(150 50% 10%);
 
         --popover: hsl(150 30% 98%);
@@ -36,36 +37,61 @@
         --ring: hsl(150 50% 40%);
 
         --radius: 0.5rem;
+
+        /* Adicionado para controle de fonte */
+        --font-size: 100%;
     }
 
-    .dark {
-        --background: 150 50% 5%;
-        --foreground: 150 10% 98%;
+    /* Estilos de alto contraste que complementam suas variáveis HSL */
+    html.high-contrast {
+        --background: hsl(0 0% 0%) !important;
+        --foreground: hsl(0 0% 100%) !important;
+        --primary: hsl(60 100% 50%) !important; /* Amarelo */
+        --title: hsl(60 100% 50%) !important;
+        --accent-foreground: hsl(0 0% 100%) !important;
+        --write: hsl(0 0% 0%) !important; /* Branco */
+        --secondary: hsl(39 100% 50%) !important; /* Laranja */
+        --secondary-foreground: hsl(0 0% 100%) !important;
+        --card: hsl(0 0% 0%) !important;
+        --card-foreground: hsl(0 0% 100%) !important;
+        --popover: hsl(0 0% 0%) !important;
+        --popover-foreground: hsl(0 0% 100%) !important;
+        --muted: hsl(0 0% 20%) !important;
+        --muted-foreground: hsl(0 0% 80%) !important;
+        --accent: hsl(60 100% 50%) !important;
+        --border: hsl(60 100% 50%) !important;
+        --input: hsl(60 100% 50%) !important;
+        --ring: hsl(60 100% 50%) !important;
+    }
 
-        --card: 150 50% 7%;
-        --card-foreground: 150 10% 98%;
+    /* Aplicação do tamanho de fonte dinâmico */
+    html {
+        font-size: var(--font-size);
+    }
 
-        --popover: 150 50% 5%;
-        --popover-foreground: 150 10% 98%;
+    /* Estilos base para alto contraste */
+    .high-contrast body {
+        background: var(--background) !important;
+        color: var(--foreground) !important;
+    }
 
-        --primary: 150 50% 40%;
-        --primary-foreground: 150 10% 98%;
+    .high-contrast a {
+        color: var(--primary) !important;
+        text-decoration: underline !important;
+    }
 
-        --secondary: 150 30% 15%;
-        --secondary-foreground: 150 10% 98%;
+    .high-contrast button,
+    .high-contrast input,
+    .high-contrast select {
+        border: 2px solid var(--primary) !important;
+        background: var(--background) !important;
+        color: var(--foreground) !important;
+    }
 
-        --muted: 150 30% 15%;
-        --muted-foreground: 150 20% 65%;
-
-        --accent: 150 30% 15%;
-        --accent-foreground: 150 10% 98%;
-
-        --destructive: 0 100% 50%;
-        --destructive-foreground: 150 10% 98%;
-
-        --border: 150 30% 20%;
-        --input: 150 30% 20%;
-        --ring: 150 50% 40%;
+    .high-contrast .card {
+        background: var(--background) !important;
+        color: var(--foreground) !important;
+        border: 2px solid var(--primary) !important;
     }
 }
 
@@ -74,6 +100,8 @@
         @apply border-border;
     }
     body {
-        @apply bg-background text-foreground m-0 p-0;
+        background: var(--background);
+        color: var(--foreground);
+        transition: background-color 0.3s, color 0.3s;
     }
 }

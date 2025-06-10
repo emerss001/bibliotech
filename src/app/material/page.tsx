@@ -39,6 +39,8 @@ const MaterialPage = () => {
         }
     };
 
+    console.log(materiais);
+
     return (
         <div className="px-9 mt-8 mb-8">
             <TitlePagina

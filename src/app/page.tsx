@@ -12,7 +12,7 @@ export default function Home() {
             <section className="bg-muted-foreground text-white">
                 <div className="flex py-16 w-full justify-center md:py-24">
                     <div className="flex flex-col items-center justify-center space-y-4 text-center mb-8">
-                        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Ler Para Todos</h1>
+                        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">BiblioTech</h1>
                         <p className="text-xl max-w-[700px] text-border">
                             Sistema de biblioteca de materiais didáticos acessíveis
                         </p>
@@ -35,7 +35,7 @@ export default function Home() {
                             <h2 className="text-2xl md:text-3xl font-bold mb-4 text-title">
                                 Sobre o BiblioTech Acessível
                             </h2>
-                            <p className="mb-4">
+                            <p className="mb-6">
                                 O BiblioTech Acessível é um sistema desenvolvido para facilitar o acesso a materiais
                                 didáticos adaptados para pessoas com diferentes necessidades.
                             </p>
@@ -88,7 +88,9 @@ export default function Home() {
                         </CardContent>
                         <CardFooter>
                             <Button asChild className="w-full">
-                                <Link href="/material">Ver Materiais</Link>
+                                <Link href="/material">
+                                    <p className="text-write">Ver materiais</p>
+                                </Link>
                             </Button>
                         </CardFooter>
                     </Card>
@@ -108,7 +110,9 @@ export default function Home() {
                         </CardContent>
                         <CardFooter>
                             <Button asChild className="w-full">
-                                <Link href="/material">Ver Materiais</Link>
+                                <Link href="/material">
+                                    <p className="text-write">Ver materiais</p>
+                                </Link>
                             </Button>
                         </CardFooter>
                     </Card>
@@ -128,7 +132,9 @@ export default function Home() {
                         </CardContent>
                         <CardFooter>
                             <Button asChild className="w-full">
-                                <Link href="/material">Ver Materiais</Link>
+                                <Link href="/material">
+                                    <p className="text-write">Ver materiais</p>
+                                </Link>
                             </Button>
                         </CardFooter>
                     </Card>
@@ -148,7 +154,9 @@ export default function Home() {
                         </CardContent>
                         <CardFooter>
                             <Button asChild className="w-full">
-                                <Link href="/material">Ver Materiais</Link>
+                                <Link href="/material">
+                                    <p className="text-write">Ver materiais</p>
+                                </Link>
                             </Button>
                         </CardFooter>
                     </Card>
@@ -163,7 +171,7 @@ export default function Home() {
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div className="bg-white p-6 rounded-lg border">
+                        <div className="bg-write p-6 rounded-lg border">
                             <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center mx-auto mb-4">
                                 <span className="font-bold">1</span>
                             </div>
@@ -173,17 +181,17 @@ export default function Home() {
                             </p>
                         </div>
 
-                        <div className="bg-white p-6 rounded-lg border">
+                        <div className="bg-write p-6 rounded-lg border">
                             <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center mx-auto mb-4">
                                 <span className="font-bold">2</span>
                             </div>
-                            <h3 className="font-medium text-secondary-foreground mb-2">Acesso</h3>
+                            <h3 className="font-medium text-secondary-foreground mb-2">Busca</h3>
                             <p className="text-sm text-accent-foreground">
                                 Encontre materiais por tipo, assunto ou área de conhecimento
                             </p>
                         </div>
 
-                        <div className="bg-white p-6 rounded-lg border">
+                        <div className="bg-write p-6 rounded-lg border">
                             <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center mx-auto mb-4">
                                 <span className="font-bold">3</span>
                             </div>
@@ -193,10 +201,73 @@ export default function Home() {
                             </p>
                         </div>
                     </div>
+                </div>
+            </section>
 
-                    <Button asChild className="">
-                        <Link href="/contribuir">Solicitar Material</Link>
-                    </Button>
+            <section className="py-12 px-9">
+                <div className="max-w-4xl mx-auto text-center">
+                    <h2 className="text-2xl md:text-3xl font-bold mb-4 text-title">Nosso time de desenvolvedores</h2>
+                    <p className="text-muted-foreground mb-8">
+                        Conheça a equipe responsável pelo desenvolvimento e manutenção do BiblioTech Acessível
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {/* desenvolvedor 1 */}
+                        <div className="flex flex-col items-center">
+                            <div className="w-32 h-32 rounded-full overflow-hidden mb-4 border-4 border-muted-foreground shadow-lg">
+                                <Image
+                                    src="/devs/emerson.png"
+                                    alt="Desenvolvedor Emerson Neves"
+                                    width={128}
+                                    height={128}
+                                    className="object-cover w-full h-full"
+                                />
+                            </div>
+                            <h3 className="text-lg font-semibold text-faculdade-900 mb-1">Emerson Neves</h3>
+                        </div>
+
+                        {/* desenvolvedor 2 */}
+                        <div className="flex flex-col items-center">
+                            <div className="w-32 h-32 rounded-full overflow-hidden mb-4 border-4 border-muted-foreground shadow-lg">
+                                <Image
+                                    src="/devs/denilson.png"
+                                    alt="Desenvolvedor Emerson Neves"
+                                    width={128}
+                                    height={128}
+                                    className="object-cover w-full h-full"
+                                />
+                            </div>
+                            <h3 className="text-lg font-semibold text-faculdade-900 mb-1">Denilson Lima</h3>
+                        </div>
+
+                        {/* desenvolvedor 3 */}
+                        <div className="flex flex-col items-center">
+                            <div className="w-32 h-32 rounded-full overflow-hidden mb-4 border-4 border-muted-foreground shadow-lg">
+                                <Image
+                                    src="/devs/emerson.png"
+                                    alt="Desenvolvedor Emerson Neves"
+                                    width={128}
+                                    height={128}
+                                    className="object-cover w-full h-full"
+                                />
+                            </div>
+                            <h3 className="text-lg font-semibold text-faculdade-900 mb-1">Luís Felipe Teles</h3>
+                        </div>
+
+                        {/* desenvolvedor 4 */}
+                        <div className="flex flex-col items-center">
+                            <div className="w-32 h-32 rounded-full overflow-hidden mb-4 border-4 border-muted-foreground shadow-lg">
+                                <Image
+                                    src="/devs/emerson.png"
+                                    alt="Desenvolvedor Emerson Neves"
+                                    width={128}
+                                    height={128}
+                                    className="object-cover w-full h-full"
+                                />
+                            </div>
+                            <h3 className="text-lg font-semibold text-faculdade-900 mb-1">Andé de Souza</h3>
+                        </div>
+                    </div>
                 </div>
             </section>
         </div>

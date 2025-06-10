@@ -9,14 +9,18 @@ export default {
     ],
     theme: {
         extend: {
+            fontSize: {
+                dynamic: ["var(--font-size)", "1.2"],
+            },
             colors: {
                 rootbackground: "var(--root-background)",
+                write: "var(--write)",
                 background: "var(--background)",
                 foreground: "var(--foreground)",
                 star: "var(--star-icon)",
                 title: "var(--title)",
                 card: {
-                    DEFAULT: "var(--card))",
+                    DEFAULT: "var(--card)",
                     foreground: "var(--card-foreground)",
                 },
                 popover: {
@@ -54,6 +58,10 @@ export default {
                     "5": "var(--chart-5)",
                 },
             },
+            transitionProperty: {
+                size: "font-size, padding, margin",
+                colors: "background-color, border-color, color, fill, stroke",
+            },
             borderRadius: {
                 lg: "var(--radius)",
                 md: "calc(var(--radius) - 2px)",
@@ -85,7 +93,32 @@ export default {
                 "full-duplo-card": "743px",
                 "duplo-card": "1015px",
             },
+            // highContrast: {
+            //     colors: {
+            //         background: "#000000",
+            //         foreground: "#FFFFFF",
+            //         primary: "#FFFF00",
+            //         // title: "#FFFF00",
+            //         secondary: "#FFA500",
+            //         card: "#000000",
+            //         cardForeground: "#FFFFFF",
+            //         popover: "#000000",
+            //         popoverForeground: "#FFFFFF",
+            //         muted: "#333333",
+            //         mutedForeground: "#CCCCCC",
+            //         accent: "#FFFF00",
+            //         accentForeground: "#000000",
+            //         border: "#FFFF00",
+            //         input: "#FFFF00",
+            //         ring: "#FFFF00",
+            //         destructive: "#FF0000",
+            //         destructiveForeground: "#FFFFFF",
+            //     },
+            // },
         },
     },
-    plugins: [require("tailwindcss-animate")],
+    plugins: [
+        require("tailwindcss-animate"),
+        // Plugin para habilitar o tema de alto contraste
+    ],
 } satisfies Config;

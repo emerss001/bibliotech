@@ -57,14 +57,14 @@ const AdminPage = () => {
 
     const filteredEmprestimosAndamento = emprestimosAndamento?.filter(
         (pedido) =>
-            pedido.solicitanteNome.toLowerCase().includes(searchEmprestimos.toLowerCase()) ||
-            pedido.materialTitulo.toLowerCase().includes(searchEmprestimos.toLowerCase())
+            pedido?.solicitanteNome?.toLowerCase().includes(searchEmprestimos.toLowerCase()) ||
+            pedido?.materialTitulo?.toLowerCase().includes(searchEmprestimos.toLowerCase())
     );
 
     const filteredEmprestimos = emprestimosPendentes?.filter(
         (pedido) =>
-            pedido.solicitanteNome.toLowerCase().includes(searchEmprestimos.toLowerCase()) ||
-            pedido.materialTitulo.toLowerCase().includes(searchEmprestimos.toLowerCase())
+            pedido?.solicitanteNome?.toLowerCase().includes(searchEmprestimos.toLowerCase()) ||
+            pedido?.materialTitulo?.toLowerCase().includes(searchEmprestimos.toLowerCase())
     );
 
     const filteredCadastros = cadastrosPendentes?.filter(
