@@ -11,7 +11,7 @@ const ContribuirPage = () => {
                 <div className="text-center mb-8">
                     <TitlePagina
                         title="Contribuir com o Acervo"
-                        description="Adicione um novo material acessível ao acervo do BiblioTech"
+                        description="Adicione um novo material acessível ao acervo do Acervo Inclusivo"
                     />
                 </div>
 

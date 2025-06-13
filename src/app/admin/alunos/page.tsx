@@ -10,8 +10,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import TabelaAlunos from "./_components/tabela-alunos";
+import { useAdmin } from "@/util/UseAdmin";
+import { toast } from "sonner";
 
 const AdminAlunosPage = () => {
+    const { isAuthorized } = useAdmin("Bibliotecario");
+
     const { data: alunos, refetch } = useQuery({
         queryKey: ["alunos-admin"],
         queryFn: listraAlunos,
@@ -33,6 +37,15 @@ const AdminAlunosPage = () => {
 
         return matchesSearch && matchesFilter;
     });
+
+    if (isAuthorized === null) {
+        return null;
+    }
+
+    if (!isAuthorized) {
+        toast.error("Acesso negado. Você não tem permissão para acessar esta página.");
+        return null;
+    }
 
     return (
         <div className="container mx-auto px-4 py-8">

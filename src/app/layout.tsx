@@ -17,7 +17,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-    title: "BiblioTech",
+    title: "Acervo Inclusivo",
     description: "Sistema de biblioteca de materiais didáticos acessíveis",
     icons: {
         icon: "/ico.png",

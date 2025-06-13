@@ -10,7 +10,7 @@ const Cadastro = () => {
         <div className="flex w-full flex-col items-center justify-center overflow-x-hidden overflow-y-auto">
             <div className="flex flex-col justify-center items-center">
                 <BookOpen size={48} className="text-primary mb-4" />
-                <h2 className="text-2xl font-semibold text-secondary-foreground mb-2">BiblioTech Acessível</h2>
+                <h2 className="text-2xl font-semibold text-secondary-foreground mb-2">Acervo Inclusivo</h2>
                 <p className="text-base text-primary">Sistema de Biblioteca de Materiais Didáticos Acessíveis</p>
             </div>
 

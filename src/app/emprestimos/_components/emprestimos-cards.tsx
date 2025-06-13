@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { criarAvaliacao } from "@/http/avaliacao";
-import { AlunoEsmprestimoResponse } from "@/http/emprestimos";
+import { AlunoEsmprestimoResponse, deletarEmprestimo } from "@/http/emprestimos";
 import { useMutation } from "@tanstack/react-query";
 import {
     AlertCircle,
@@ -29,9 +29,10 @@ import { parse } from "date-fns";
 interface EmprestimoCardsProps {
     value: "solicitados" | "aprovados" | "historico";
     material: AlunoEsmprestimoResponse;
+    refetch?: () => void;
 }
 
-const EmprestimoCards = ({ value, material }: EmprestimoCardsProps) => {
+const EmprestimoCards = ({ value, material, refetch }: EmprestimoCardsProps) => {
     const [rating, setRating] = useState(0);
     const [comentario, setComentario] = useState("");
     const [avaliar, setAvaliar] = useState(false);
@@ -40,6 +41,20 @@ const EmprestimoCards = ({ value, material }: EmprestimoCardsProps) => {
         mutationFn: async (avaliacao: { materialId: number; nota: number; avaliacao: string }) => {
             const response = await criarAvaliacao(avaliacao);
             return response;
+        },
+    });
+
+    const { mutate: cancelar, isPending: cancelarPedding } = useMutation({
+        mutationFn: deletarEmprestimo,
+        onSuccess: () => {
+            toast.success("Empréstimo cancelado com sucesso!");
+            if (refetch) {
+                refetch();
+            }
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onError: (error: any) => {
+            toast.error("Erro ao cancelar empréstimo: " + error.message);
         },
     });
 
@@ -244,7 +259,12 @@ const EmprestimoCards = ({ value, material }: EmprestimoCardsProps) => {
 
                     {material.status === "PENDENTE" && (
                         <div className="mt-4">
-                            <Button variant="outline" className="w-full text-primary">
+                            <Button
+                                variant="outline"
+                                className="w-full text-primary"
+                                onClick={() => cancelar(material.id)}
+                                disabled={cancelarPedding}
+                            >
                                 <XIcon className="h-4 w-4 text-primary" />
                                 Cancelar
                             </Button>

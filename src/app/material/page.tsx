@@ -2,7 +2,7 @@
 
 import TitlePagina from "@/components/title-pagina";
 import Filtros from "./_componentes/filtro";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MaterialCard from "./_componentes/material-card";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -11,6 +11,7 @@ import { SlidersHorizontalIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import getFiltros from "@/http/catalo";
 import { FiltroProps, getMateriais } from "@/http/material";
+import { useAuth } from "@/components/AuthContext";
 
 const MaterialPage = () => {
     const [filtros, setFiltros] = useState<FiltroProps>({} as FiltroProps);
@@ -39,7 +40,14 @@ const MaterialPage = () => {
         }
     };
 
-    console.log(materiais);
+    const { isAuthenticated, logout, authChecked } = useAuth();
+
+    useEffect(() => {
+        if (authChecked && !isAuthenticated) {
+            toast.error("Sessão expirada. Faça login novamente.", { duration: 3000 });
+            logout();
+        }
+    }, [authChecked, isAuthenticated, logout]);
 
     return (
         <div className="px-9 mt-8 mb-8">

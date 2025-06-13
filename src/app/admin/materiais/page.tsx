@@ -10,8 +10,12 @@ import { useQuery } from "@tanstack/react-query";
 import { listarMateriais } from "@/http/admin";
 import TabelaMateriais from "./_components/tabela-materiais";
 import { Button } from "@/components/ui/button";
+import { useAdmin } from "@/util/UseAdmin";
+import { toast } from "sonner";
 
 const AdminMateriaisPage = () => {
+    const { isAuthorized } = useAdmin("Bibliotecario");
+
     const { data: materiais, refetch } = useQuery({
         queryKey: ["materiais-admin"],
         queryFn: listarMateriais,
@@ -32,6 +36,15 @@ const AdminMateriaisPage = () => {
 
         return matchesSearch && matchesFilter;
     });
+
+    if (isAuthorized === null) {
+        return null;
+    }
+
+    if (!isAuthorized) {
+        toast.error("Acesso negado. Você não tem permissão para acessar esta página.");
+        return null;
+    }
 
     return (
         <div className="container mx-auto px-4 py-8">

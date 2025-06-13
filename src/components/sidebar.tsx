@@ -16,7 +16,7 @@ const Sidebar = () => {
         <header className="flex justify-between top-0 w-full border-b backdrop-blur px-9 py-4">
             <Link href="/" className="flex items-center gap-2">
                 <BookOpen size={24} className="text-primary" />
-                <p className="text-xl font-bold">BiblioTech UNIF</p>
+                <p className="text-xl font-bold">Acervo Inclusivo</p>
             </Link>
 
             {vinculo === "Aluno" && (

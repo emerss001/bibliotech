@@ -40,7 +40,7 @@ export const criarEmprestimo = async (id: number, mensagem: string) => {
     } catch (error) {
         if (axios.isAxiosError(error)) {
             if (error.response) {
-                throw new Error(error.response.data.error || "Erro ao aprovar o empréstimo.");
+                throw new Error(error.response.data.error);
             }
         }
     }
@@ -60,6 +60,27 @@ export const listarEmprestimosAluno = async (): Promise<AlunoEsmprestimoResponse
     });
 
     return response.data;
+};
+
+export const deletarEmprestimo = async (id: number): Promise<void> => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        throw new Error("Token não encontrado. Faça login novamente.");
+    }
+    try {
+        await axios.delete(`${urlBase}/protegida/emprestimos/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            if (error.response) {
+                throw new Error(error.response.data.error || "Erro ao deletar o empréstimo.");
+            }
+        }
+        throw new Error("Erro ao deletar o empréstimo.");
+    }
 };
 
 export type { AlunoEsmprestimoResponse };

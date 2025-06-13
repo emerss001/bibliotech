@@ -22,7 +22,7 @@ const SolicitarEmprestimoButton = ({ disponibilidade, materialId }: SolicitarEmp
             atualizarUsoMaterial(materialId);
         },
         onError: (error) => {
-            toast.error("Erro ao solicitar o empréstimo. " + error);
+            toast.error("Erro ao solicitar o empréstimo. " + error.message);
         },
     });
 
@@ -60,7 +60,9 @@ const SolicitarEmprestimoButton = ({ disponibilidade, materialId }: SolicitarEmp
                     onChange={(e) => setMensagem(e.target.value)}
                     placeholder="Para qual finalidade este empréstimo?"
                 />
-                <Button onClick={handleSolicitarEmprestimo}>Solicitar</Button>
+                <Button onClick={handleSolicitarEmprestimo} disabled={!disponibilidade || solicitado}>
+                    Solicitar
+                </Button>
             </div>
         </div>
     );

@@ -12,7 +12,7 @@ export default function Home() {
             <section className="bg-muted-foreground text-white">
                 <div className="flex py-16 w-full justify-center md:py-24">
                     <div className="flex flex-col items-center justify-center space-y-4 text-center mb-8">
-                        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">BiblioTech</h1>
+                        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Acervo Inclusivo</h1>
                         <p className="text-xl max-w-[700px] text-border">
                             Sistema de biblioteca de materiais didáticos acessíveis
                         </p>
@@ -32,11 +32,9 @@ export default function Home() {
                 <div className="">
                     <div className="flex px-9 flex-col md:flex-row gap-8 items-center">
                         <div className="md:w-1/2">
-                            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-title">
-                                Sobre o BiblioTech Acessível
-                            </h2>
+                            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-title">Sobre o Acervo Inclusivo</h2>
                             <p className="mb-6">
-                                O BiblioTech Acessível é um sistema desenvolvido para facilitar o acesso a materiais
+                                O Acervo Inclusivo é um sistema desenvolvido para facilitar o acesso a materiais
                                 didáticos adaptados para pessoas com diferentes necessidades.
                             </p>
                             <p className="mb-6">
@@ -69,7 +67,7 @@ export default function Home() {
             </section>
 
             <section className="py-12 px-9">
-                <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center text-title">Acervo Acessível</h2>
+                <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center text-title">Vasto Acervo Acessível</h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <Card className="transition-colors">
@@ -167,7 +165,7 @@ export default function Home() {
                 <div className="max-w-3xl mx-auto text-center">
                     <h2 className="text-2xl md:text-3xl font-bold mb-4 text-title">Como Funciona</h2>
                     <p className="text-muted-foreground mb-8">
-                        O BiblioTech Acessível foi desenvolvido para facilitar o acesso a materiais didáticos adaptados:
+                        O Acervo Inclusivo foi desenvolvido para facilitar o acesso a materiais didáticos adaptados:
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -204,11 +202,11 @@ export default function Home() {
                 </div>
             </section>
 
-            <section className="py-12 px-9">
+            <section className="py-12 px-9 space-y-9">
                 <div className="max-w-4xl mx-auto text-center">
                     <h2 className="text-2xl md:text-3xl font-bold mb-4 text-title">Nosso time de desenvolvedores</h2>
                     <p className="text-muted-foreground mb-8">
-                        Conheça a equipe responsável pelo desenvolvimento e manutenção do BiblioTech Acessível
+                        Conheça a equipe responsável pelo desenvolvimento e manutenção do Acervo Inclusivo
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -244,7 +242,7 @@ export default function Home() {
                         <div className="flex flex-col items-center">
                             <div className="w-32 h-32 rounded-full overflow-hidden mb-4 border-4 border-muted-foreground shadow-lg">
                                 <Image
-                                    src="/devs/emerson.png"
+                                    src="/devs/teles.png"
                                     alt="Desenvolvedor Emerson Neves"
                                     width={128}
                                     height={128}
@@ -258,7 +256,7 @@ export default function Home() {
                         <div className="flex flex-col items-center">
                             <div className="w-32 h-32 rounded-full overflow-hidden mb-4 border-4 border-muted-foreground shadow-lg">
                                 <Image
-                                    src="/devs/emerson.png"
+                                    src="/devs/andre.png"
                                     alt="Desenvolvedor Emerson Neves"
                                     width={128}
                                     height={128}
@@ -267,6 +265,26 @@ export default function Home() {
                             </div>
                             <h3 className="text-lg font-semibold text-faculdade-900 mb-1">Andé de Souza</h3>
                         </div>
+                    </div>
+                </div>
+
+                <div className="mx-auto text-center">
+                    <h2 className="text-2xl font-bold mb-4 text-title">Nosso Orientador</h2>
+                    <p className="text-muted-foreground mb-8">
+                        Responsável por guiar o desenvolvimento, com experiência em acessibilidade e tecnologia
+                        educacional.
+                    </p>
+                    <div className="flex flex-col items-center">
+                        <div className="w-32 h-32 rounded-full overflow-hidden mb-4 border-4 border-muted-foreground shadow-lg">
+                            <Image
+                                src="/devs/woquiton.png"
+                                alt="Orientador Woquiton Fernandes"
+                                width={128}
+                                height={128}
+                                className="object-cover w-full h-full"
+                            />
+                        </div>
+                        <h3 className="text-lg font-semibold text-faculdade-900 mb-1">Woquiton Fernandes</h3>
                     </div>
                 </div>
             </section>

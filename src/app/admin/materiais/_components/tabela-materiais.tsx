@@ -125,7 +125,7 @@ const TabelaMateriais = ({ materiais, refetch }: TabelaMateriaisProps) => {
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-12 relative rounded-md overflow-hidden flex-shrink-0">
                                                 <Image
-                                                    src={material.capa || "/placeholder.png"}
+                                                    src={material.capa || "/capa-placeholder.png"}
                                                     alt="Capa do material"
                                                     fill
                                                     className="object-cover"

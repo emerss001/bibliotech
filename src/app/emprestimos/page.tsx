@@ -5,12 +5,24 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EmprestimoCards from "./_components/emprestimos-cards";
 import { useQuery } from "@tanstack/react-query";
 import { listarEmprestimosAluno } from "@/http/emprestimos";
+import { useAuth } from "@/components/AuthContext";
+import { toast } from "sonner";
+import { useEffect } from "react";
 
 const EmprestimoPage = () => {
-    const { data } = useQuery({
+    const { data, refetch } = useQuery({
         queryKey: ["emprestimos-aluno"],
         queryFn: listarEmprestimosAluno,
     });
+
+    const { isAuthenticated, logout, authChecked } = useAuth();
+
+    useEffect(() => {
+        if (authChecked && !isAuthenticated) {
+            toast.error("Sessão expirada. Faça login novamente.", { duration: 3000 });
+            logout();
+        }
+    }, [authChecked, isAuthenticated, logout]);
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -43,7 +55,12 @@ const EmprestimoPage = () => {
                     {data?.map(
                         (material) =>
                             material.status === "PENDENTE" && (
-                                <EmprestimoCards key={material.id} value="solicitados" material={material} />
+                                <EmprestimoCards
+                                    key={material.id}
+                                    value="solicitados"
+                                    material={material}
+                                    refetch={refetch}
+                                />
                             )
                     )}
                 </div>
