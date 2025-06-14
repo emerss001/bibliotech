@@ -32,8 +32,8 @@ const AdminAlunosPage = () => {
 
         const matchesFilter =
             filterStatus === "todos" ||
-            (filterStatus === "ativos" && aluno.suspenso === true) ||
-            (filterStatus === "suspenso" && aluno.suspenso === false);
+            (filterStatus === "ativos" && aluno.suspenso === false) ||
+            (filterStatus === "suspenso" && aluno.suspenso === true);
 
         return matchesSearch && matchesFilter;
     });

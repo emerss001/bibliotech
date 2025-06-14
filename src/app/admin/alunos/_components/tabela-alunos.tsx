@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlunosResponse, ativarAluno, suspenderAluno } from "@/http/admin";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { BookOpenIcon, UserCheckIcon, UsersIcon, UserXIcon } from "lucide-react";
+import { BookOpenIcon, LoaderCircleIcon, UserCheckIcon, UsersIcon, UserXIcon } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface TabelaAlunosProps {
@@ -14,6 +15,8 @@ interface TabelaAlunosProps {
 
 const TabelaAlunos = ({ alunos, refetch }: TabelaAlunosProps) => {
     const queryClient = useQueryClient();
+    const [loadingId, setLoadingId] = useState<number | null>(null);
+
     const { mutate: suspender } = useMutation({
         mutationKey: ["suspender-aluno"],
         mutationFn: suspenderAluno,
@@ -45,10 +48,16 @@ const TabelaAlunos = ({ alunos, refetch }: TabelaAlunosProps) => {
     });
 
     const handleSuspenderAluno = (suspenso: boolean, alunoId: number) => {
+        setLoadingId(alunoId);
+
         if (suspenso) {
-            ativar(alunoId);
+            ativar(alunoId, {
+                onSettled: () => setLoadingId(null),
+            });
         } else {
-            suspender(alunoId);
+            suspender(alunoId, {
+                onSettled: () => setLoadingId(null),
+            });
         }
     };
 
@@ -103,24 +112,34 @@ const TabelaAlunos = ({ alunos, refetch }: TabelaAlunosProps) => {
                                             <Button
                                                 size="icon"
                                                 className="w-full"
-                                                onClick={() => {
-                                                    handleSuspenderAluno(aluno.suspenso, aluno.id);
-                                                }}
+                                                onClick={() => handleSuspenderAluno(aluno.suspenso, aluno.id)}
+                                                disabled={loadingId === aluno.id}
                                             >
-                                                <UserCheckIcon className="mr-2 h-4 w-4" />
-                                                Ativar Alumo
+                                                {loadingId === aluno.id ? (
+                                                    <LoaderCircleIcon className="animate-spin" />
+                                                ) : (
+                                                    <>
+                                                        <UserCheckIcon className="mr-2 h-4 w-4" />
+                                                        Ativar Aluno
+                                                    </>
+                                                )}
                                             </Button>
                                         ) : (
                                             <Button
                                                 variant="destructive"
                                                 size="icon"
                                                 className="w-full"
-                                                onClick={() => {
-                                                    handleSuspenderAluno(aluno.suspenso, aluno.id);
-                                                }}
+                                                onClick={() => handleSuspenderAluno(aluno.suspenso, aluno.id)}
+                                                disabled={loadingId === aluno.id}
                                             >
-                                                <UserXIcon className="mr-2 h-4 w-4" />
-                                                Suspender Aluno
+                                                {loadingId === aluno.id ? (
+                                                    <LoaderCircleIcon className="animate-spin" />
+                                                ) : (
+                                                    <>
+                                                        <UserXIcon className="mr-2 h-4 w-4" />
+                                                        Suspender Aluno
+                                                    </>
+                                                )}
                                             </Button>
                                         )}
                                     </TableCell>
